@@ -2,13 +2,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void dfs(vector<int> *edges, int start, unordered_set<int> &visited, stack<int> &finishStack)
+void dfs(vector<int> *edges, int start, bool *visited, stack<int> &finishStack)
 {
-    visited.insert(start);
+    visited[start] = true;
     for (int i = 0; i < edges[start].size(); i++)
     {
         int adjacent = edges[start][i];
-        if (visited.count(adjacent) == 0)
+        if (!visited[adjacent])
         {
             dfs(edges, adjacent, visited, finishStack);
         }
@@ -16,14 +16,14 @@ void dfs(vector<int> *edges, int start, unordered_set<int> &visited, stack<int> 
     finishStack.push(start);
 }
 
-void dfs2(vector<int> *edgesT, int start, unordered_set<int> *component, unordered_set<int> &visited)
+void dfs2(vector<int> *edgesT, int start, unordered_set<int> *component, bool *visited)
 {
-    visited.insert(start);
+    visited[start] = true;
     component->insert(start);
     for (int i = 0; i < edgesT[start].size(); i++)
     {
         int adjacent = edgesT[start][i];
-        if (visited.count(adjacent) == 0)
+        if (!visited[adjacent])
         {
             dfs2(edgesT, adjacent, component, visited);
         }
@@ -32,22 +32,30 @@ void dfs2(vector<int> *edgesT, int start, unordered_set<int> *component, unorder
 
 unordered_set<unordered_set<int> *> *getSCC(vector<int> *edges, vector<int> *edgesT, int n)
 {
-    unordered_set<int> visited;
+    bool *visited = new bool[n];
+    for (int i = 0; i < n; i++)
+    {
+        visited[i] = false;
+    }
+
     stack<int> finishedVertices;
     for (int i = 0; i < n; i++)
     {
-        if (visited.count(i) == 0)
+        if (!visited[i])
         {
             dfs(edges, i, visited, finishedVertices);
         }
     }
     unordered_set<unordered_set<int> *> *output = new unordered_set<unordered_set<int> *>();
-    visited.clear();
+    for (int i = 0; i < n; i++)
+    {
+        visited[i] = false;
+    }
     while (finishedVertices.size() != 0)
     {
         int element = finishedVertices.top();
         finishedVertices.pop();
-        if (visited.count(element) == 0)
+        if (!visited[element])
         {
             unordered_set<int> *component = new unordered_set<int>();
             dfs2(edgesT, element, component, visited);
