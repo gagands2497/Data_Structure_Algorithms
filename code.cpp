@@ -33,7 +33,7 @@ ll solve(ll input[],ll n)
         ll curr_xor = 0;
         for(int j = i;j<n;j++)
         {
-            curr_xor += curr_xor ^ input[j];
+            curr_xor ^=  input[j];
             ans = max(ans,curr_xor);
         }
     }
