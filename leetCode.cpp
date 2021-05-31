@@ -25,20 +25,41 @@ long long MOD = 1e9 + 7;
 
 //---------------Write Functions and classes here------------------
 
-ll solve(ll input[],ll n)
+void printVector(vector<int> nums,int number)
 {
-    ll ans = INT_MIN;
-    for(int i = 0;i<n;i++)
+    cout<<"Vector number is "<<number<<endl;
+    for(int i : nums)
     {
-        ll curr_xor = 0;
-        for(int j = i;j<n;j++)
-        {
-            curr_xor += curr_xor ^ input[j];
-            ans = max(ans,curr_xor);
-        }
+        cout<<i<<" ";
     }
-    return ans;
+    cout<<endl;
 }
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        unordered_map<int ,int> M;
+
+        vector<int> ans;
+
+        for(int i = 0;i<n;i++)
+        {
+            
+            int k = M[target - nums[i]] - 1;
+            if(M[target - nums[i]] )
+            {
+                ans.push_back(i);
+                ans.push_back(M[target - nums[i]] - 1);
+                if(ans[0] == ans[1])continue;
+                else return ans;
+            } 
+            M[nums[i]] = i + 1;
+        }
+        return ans;
+
+    }
+};
 
 //-----------------------------------------------------------------
 
@@ -47,16 +68,12 @@ ll solve(ll input[],ll n)
 int main()
 {
     IO();
-    ll n;
-    cin>>n;
-    ll input[n];
+    Solution sol;
+    vector<int> nums = {2,5,5,11};
+    int target = 10;
 
-    for(int i = 0;i<n;i++)
-    {
-        cin>>input[i];
-    }
-    cout<<solve(input,n)<<endl;
-
+    vector<int> ans = sol.twoSum(nums,target);
+    cout<<ans[0]<<" "<<ans[1]<<endl;
 }
 
 //------------------Do calculatios here----------------------------
