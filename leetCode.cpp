@@ -34,32 +34,64 @@ void printVector(vector<int> nums,int number)
     }
     cout<<endl;
 }
-
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        int n = nums.size();
-        unordered_map<int ,int> M;
 
-        vector<int> ans;
+    bool isValid(int i,int j,int n,int m)
+    {
+        if(i>=0 && i<n && j>=0 && j<m)return true;
+        return false;
+    }
 
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+        int ans = 0;
+        int n = grid.size();
+        if(n == 0)
+        {
+            return 0;
+        }
+        int m = grid[0].size();
+        vector<vector<bool>> visited(n,vector<bool>(m,false));
+        
         for(int i = 0;i<n;i++)
         {
-            
-            int k = M[target - nums[i]] - 1;
-            if(M[target - nums[i]] )
+            for(int j = 0;j<m;j++)
             {
-                ans.push_back(i);
-                ans.push_back(M[target - nums[i]] - 1);
-                if(ans[0] == ans[1])continue;
-                else return ans;
-            } 
-            M[nums[i]] = i + 1;
+                if(!visited[i][j] && grid[i][j])
+                {
+                    queue<pair<int,int>> waiting;
+
+                    waiting.push(make_pair(i,j));
+                    int islandArea = 0;
+                    while(waiting.empty() == false)
+                    {
+                        pair<int,int> curr = waiting.front();
+                        waiting.pop();
+                        islandArea++;
+                        visited[curr.first][curr.second] = true;
+                        
+                        //four directions
+                        int dx[4] = {0,0,+1,-1};
+                        int dy[4] = {+1,-1,0,0};   
+
+                        for(int k = 0;k<4;k++)
+                        {
+                            int x = curr.first + dx[k];
+                            int y = curr.second + dy[k];
+                            if(isValid(x,y,n,m) && grid[x][y] && !visited[x][y])
+                            {
+                                waiting.push(make_pair(x,y));
+                            }
+                        }
+                    }
+                    ans = max(islandArea,ans);
+                }
+            }
         }
         return ans;
-
     }
 };
+
 
 //-----------------------------------------------------------------
 
@@ -69,11 +101,11 @@ int main()
 {
     IO();
     Solution sol;
-    vector<int> nums = {2,5,5,11};
-    int target = 10;
+    vector<vector<int>> grid;
+    grid = {{1,1,0,0,0},{1,1,0,0,0},{0,0,0,1,1},{0,0,0,1,1}};
 
-    vector<int> ans = sol.twoSum(nums,target);
-    cout<<ans[0]<<" "<<ans[1]<<endl;
+    cout<<sol.maxAreaOfIsland(grid)<<endl;
+
 }
 
 //------------------Do calculatios here----------------------------
