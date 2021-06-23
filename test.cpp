@@ -1,59 +1,75 @@
-#include <queue>
 #include <iostream>
-#include <cstdio>
-#include <algorithm>
-#include <cmath>
-#include <cstring>
+#include <vector>
 using namespace std;
-const int M = 3e5 + 233;
-const int Mod = 1e9 + 7;
-const int INF = 0x3f3f3f;
-typedef long long ll;
-char s[M];
-vector <int> v[M];
-int vis[M], in[M];
-int dp[M][40] ;//The number of subcharacters ending in i
- 
-int dfs(int x)
+vector<int> *Sieve()
 {
-    in[x] = 1;
-    vis[x] = 1;
-    dp[x][s[x]-'a'] = 1;
-    for(int i=0;i<v[x].size();i++)
+    bool isprime[100001];
+    for (int i = 0; i < 100001; i++)
     {
-        int &t = v[x][i];
-        if(in[t]) printf("-1\n"), exit(0);
-        if(!vis[t]) dfs(t);
-        for(int j=0;j<26;j++)
-            dp[x][j] = max(dp[t][j]+((s[x]-'a')==j),dp[x][j]);
+        isprime[i] = true;
     }
-    in[x] = 0;
+    for (int i = 2; i * i < 100001; i++)
+    {
+        if (isprime[i])
+        {
+            for (int j = i * i; j < 100001; j += i)
+            {
+                isprime[j] = false;
+            }
+        }
+    }
+    vector<int> *primes = new vector<int>();
+    primes->push_back(2);
+    for (int i = 3; i < 100001; i += 2)
+    {
+        if (isprime[i])
+        {
+            primes->push_back(i);
+        }
+    }
+    return primes;
+}
+void print_primes(long long left, long long right, vector<int> *&primes)
+{
+    bool *isprime = new bool[right - left + 1];
+    for (int i = 0; i <= right - left; i++)
+    {
+        isprime[i] = true;
+    }
+    for (int i = 0; primes->at(i) * (long long)primes->at(i) <= right; i++)
+    {
+        int current_prime = primes->at(i);
+        long long base = (left / current_prime) * current_prime;
+        if (base < left)
+        {
+            base += current_prime;
+        }
+        for (long long j = base; j <= right; j += current_prime)
+        {
+            isprime[j - left] = false;
+        }
+        if (base == current_prime)
+        {
+            isprime[base - left] = true;
+        }
+    }
+    for (int i = 0; i <= right - left; i++)
+    {
+        if (isprime[i])
+        {
+            cout << i + left << endl;
+        }
+    }
 }
 int main()
 {
-    int n,m;
-    string input;
-    cin>>input;
-    for(int i = 0;i<input.length();i++)
+    vector<int> *primes = Sieve();
+    int t;
+    cin >> t;
+    while (t--)
     {
-        s[i] = input[i];
+        long long left, right;
+        cin >> left >> right;
+        print_primes(left, right, primes);
     }
-    s[input.length()] = '\0';
-    int x[m],y[m];
-    for(int i = 0;i<m;i++)
-    {
-        cin>>x[i]>>y[i];
-    }
-    for(int i=0;i<m;i++)
-    {
-        v[x[i]].push_back(y[i]);
-        if(x[i] == y[i]) return 0*puts("-1");
-    }
-    for(int i=1;i<=n;i++)  if(!vis[i])  dfs(i);
-    int ans = 0;
-    for(int i=1;i<=n;i++)
-    for(int j=0;j<30;j++)
-        ans  = max(ans,dp[i][j]);
-    printf("%d\n",ans);
 }
-// 3 3  aaa 1 2 2 3 3 1

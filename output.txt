@@ -1,1 +1,3 @@
-sum of first 5 elements is 15
+YES
+NO
+YES
