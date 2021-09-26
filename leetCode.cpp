@@ -1,11 +1,6 @@
-//------------Copyright Gagandeep Singh---------------------------
-
-//-----------------Import Headers and define namespaces------------
 #include <bits/stdc++.h>
 using namespace std;
-//-----------------------------------------------------------------
 
-//------------------Function for Input Output----------------------
 void IO()
 {
 #ifndef ONLINE_JUDGE
@@ -13,52 +8,74 @@ void IO()
     freopen("output.txt", "w", stdout);
 #endif
 }
-//----------------------------------------------------------------
 
-//-----------------Write Macros and Global here -------------------
 #define ll long long
 long long MOD = 1e9 + 7;
-//-----------------------------------------------------------------
-
-//---------------Write Functions and classes here------------------
 class Solution {
 public:
-
-    double power(double x, int n) {
-        double ans = 1;
-        while (n) {
-            if (n % 2 == 0) {
-                n /= 2;
-                x *= x;
-            } else {
-                n--;
-                ans *= x;
+    
+    void merger(vector<int> &nums,vector<int> &temp,int start,int end){
+        int mid = (start + end)/2;
+        int i = start,j = mid+1,k  = start;
+        
+        while( i<=mid && j<=end){
+            if(nums[i] < nums[j]){
+                temp[k] = nums[i];
+                k++;
+                i++;
+            }else{
+                temp[k] = nums[j];
+                k++;
+                j++;
             }
         }
-        return ans;
+        
+        while(i<=mid){
+            temp[k++] = nums[i++];
+        }
+        
+        while(j<=end){
+            temp[k++] = nums[j++];
+        }
+        
+        for(int i = start;i<=end;i++){
+            nums[i] = temp[i];
+        }
+        return;
     }
-
-    double myPow(double x, int n) {
-        if (n == 0) {
-            return 1;
+    
+    
+    void merge_sort(vector<int> &nums,vector<int> &temp,int start,int end){
+        if(start< end){
+            int mid = (start + end)/2;
+            
+            merge_sort(nums,temp,start,mid);
+            merge_sort(nums,temp,mid+1,end);
+            
+            merger(nums,temp,start,end);
         }
-        else if (n > 0) {
-            return power(x, n);
-        } else {
-            n = -n;
-            return (double)(1.0) / (double)(power(x, n));
-        }
+        return;
+    }
+    
+    vector<int> sortArray(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> temp;
+        int start = 0,end = n-1;
+        
+        merge_sort(nums,temp,start,end);
+        
+        return nums;
+        
     }
 };
-//-----------------------------------------------------------------
-
-//--------------------Main functions-------------------------------
 int main()
 {
     IO();
     Solution sol;
+    vector<int> nums = {5, 4, 8, 7, 5, 6, 1, 8, 13, 5, 6, 5};
+    vector<int> ans = sol.sortArray(nums) ;
 
-    cout << sol.myPow(2, -2) << endl;
+    for(int i:ans){
+        cout << i << " " ;
+    }
 }
-
-//------------------Do calculatios here----------------------------
